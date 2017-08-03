@@ -10,6 +10,7 @@ class Search extends Component {
   }
 
   updateQuery = (query) => {
+    let found = false;
     this.setState({query}, () => {
       if(this.state.query.length > 0){
         BooksAPI.search(this.state.query, 20).then((books) => {
@@ -18,7 +19,11 @@ class Search extends Component {
               for(const oldBook of this.props.books){
                 if(newBook.id === oldBook.id){
                   newBook.shelf = oldBook.shelf;
+                  found = true;
                 }
+              }
+              if(!found){
+                newBook.shelf = 'none';
               }
             }
             this.setState({books});
