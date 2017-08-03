@@ -1,29 +1,18 @@
-import React, { Component } from 'react'
-import BookShelf from './BookShelf'
-import * as BooksAPI from './BooksAPI'
+import React, { Component } from 'react';
+import BookShelf from './BookShelf';
 
 class BookCase extends Component {
   state = {
-    books: []
+    books: this.props.books
   }
 
   constructor(props){
-    super(props)
+    super(props);
     this.shelves = [
       {title: 'Currently Reading', status:'currentlyReading'},
       {title: 'Want To Read', status:'wantToRead'},
       {title: 'Read', status:'read'}
     ]
-  }
-
-  componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState({books})
-    })
-  }
-
-  updateBook = (updatedBook) => {
-    this.setState({books:this.state.books})
   }
 
   render() {
@@ -34,8 +23,8 @@ class BookCase extends Component {
             <BookShelf
               key={shelf.status}
               title={shelf.title}
-              books={this.state.books.filter((book)=>book.shelf===shelf.status)}
-              cb={this.updateBook}
+              books={this.props.books.filter((book)=>book.shelf===shelf.status)}
+              cb={this.props.cb}
             />
           ))}
         </div>
@@ -43,4 +32,4 @@ class BookCase extends Component {
     )
   }
 }
-export default BookCase
+export default BookCase;

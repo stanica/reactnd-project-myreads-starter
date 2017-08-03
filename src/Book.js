@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import * as BooksAPI from './BooksAPI';
 
 class Book extends Component {
   state = {
@@ -7,18 +8,26 @@ class Book extends Component {
 
   changeShelf = (event) => {
     this.setState({shelf:event.target.value}, () => {
-      this.props.book.shelf = this.state.shelf
-      this.props.cb(this.props.book)
+      BooksAPI.update({id:this.props.book.id}, this.state.shelf).then((data) => {
+        if(data[this.state.shelf] && data[this.state.shelf].indexOf(this.props.book.id) > -1){
+          this.props.book.shelf = this.state.shelf;
+        }
+        else {
+          this.props.book.shelf = 'none';
+        }
+        this.props.cb(this.props.book);
+      })
+      .catch(e => console.log('There was an error updating the book'))
     })
   }
 
   render(){
-    //console.log(this.props.book)
     return (
       <li>
         <div className="book">
           <div className="book-top">
-            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.book.imageLinks['smallThumbnail']})` }}></div>
+            <div
+              className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.book.imageLinks ? this.props.book.imageLinks['smallThumbnail'] : ''})` }}></div>
             <div className="book-shelf-changer">
               <select value={this.state.shelf} onChange={this.changeShelf}>
                 <option value="none" disabled>Move to...</option>
@@ -30,13 +39,13 @@ class Book extends Component {
             </div>
           </div>
           <div className="book-title">{this.props.book.title}</div>
-          {this.props.book.authors.map((author) => (
+          {this.props.book.authors ? this.props.book.authors.map((author) => (
             <div className="book-authors" key={author}>{author}</div>
-          ))}
+          )) : ''}
         </div>
       </li>
     )
   }
 }
 
-export default Book
+export default Book;
